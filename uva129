@@ -1,0 +1,76 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+int n, m, num = 0;
+int x = 0;
+vector<int> q;
+bool fun(int k) //用于判断是否相邻相等
+{
+    q.push_back(k);
+    num++;
+    for (int j = 1; j <= num / 2; j++)
+    {
+        int flag = 1;
+        for (int g = 0; g < j; g++)
+        {
+            if (q[q.size() - j + g] != q[q.size() - 2 * j + g])
+            {
+                flag = 0;
+                break;
+            }
+        }
+        if (flag)
+        {
+            q.pop_back();
+            num--;
+            return false;
+        } //如果flag=1说明存在子序列全相等
+    }
+    return true;
+}
+void dfs() //已经含有x个困难序列
+{
+    if (x == n)
+    {
+        for (int i = 0; i < q.size(); i++)
+        {
+            printf("%c", q[i] - 1 + 'A');
+            if ((i + 1) % 64 == 0 || i + 1 == q.size())
+                printf("\n");
+            else if ((i + 1) % 4 == 0)
+                printf(" ");
+        }
+        printf("%d\n", q.size());
+        return;
+    }
+    for (int i = 1; i <= m && x < n; i++)
+    {
+        if (fun(i))
+        {
+            ++x;
+            dfs();
+            q.pop_back();
+            num--;
+        }
+        else if(i==m)
+        {
+            // q.pop_back();//此处写法bug原因：若传回时候也是最后一层，那再也没用机会让for重新进入else if来删元素了
+            // num--;
+            return;
+        }
+    }
+}
+int main()
+{
+
+    while (cin >> n >> m)
+    {
+        if (n == 0 || m == 0)
+            break;
+        x = 0;
+        num = 0;
+        q.clear();
+        dfs();
+    }
+    return 0;
+}
